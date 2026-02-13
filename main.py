@@ -1,15 +1,19 @@
 import os
 from fastapi import FastAPI, Body
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-# --- 1. API KEY CONFIGURATION (Fixes 500 Error) ---
-# Replace the text inside the quotes with your actual key from the screenshot
-os.environ["GOOGLE_API_KEY"] = "AIzaSyAkD5LwaWkLVsbuR6k_Ah30k7B-sl5MPhs_FULL_KEY_HERE"
+# --- 1. API KEY CONFIGURATION ---
+os.environ["GOOGLE_API_KEY"] = "AIzaSyAkD5LwaWkLVsbuR6k_Ah30k7B-sl5MPhs"
 
 app = FastAPI()
+
+@app.get("/")
+async def read_index():
+    return FileResponse('index.html')
 
 # --- 2. CORS SETUP (Allows Frontend to connect) ---
 app.add_middleware(
@@ -96,3 +100,5 @@ async def generate_alert(data: dict = Body(...)):
     alert_text = alert_chain.invoke({})
     
     return {"message": alert_text}
+
+ 
