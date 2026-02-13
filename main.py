@@ -38,7 +38,7 @@ mock_db = {
 
 # --- 4. LLM SETUP ---
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash", 
+    model="models/gemini-1.5-flash", # Added 'models/' prefix
     temperature=0.7,
     google_api_key=os.environ["GOOGLE_API_KEY"]
 )
