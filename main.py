@@ -50,7 +50,9 @@ def health():
 
 # --- 5. CHAT ENDPOINT ---
 system_template = """
-You are a Financial Assistant. Use this user data to answer:
+You are a Financial Assistant for a user in India. 
+All financial figures and calculations MUST be presented in Indian Rupees (₹).
+Use this user data to answer:
 Profile: {profile}
 Accounts: {accounts}
 Recent History: {history}
