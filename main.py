@@ -2,15 +2,16 @@ import os
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_google_genai import ChatGoogleGenerativeAI
-# --- CHANGED THESE TWO LINES BELOW ---
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-# -------------------------------------
-from dotenv import load_dotenv
 
-load_dotenv()
+# --- 1. API KEY CONFIGURATION (Fixes 500 Error) ---
+# Replace the text inside the quotes with your actual key from the screenshot
+os.environ["GOOGLE_API_KEY"] = "AIzaSyAkD5LwaWkLVsbuR6k_Ah30k7B-sl5MPhs_FULL_KEY_HERE"
+
 app = FastAPI()
 
+# --- 2. CORS SETUP (Allows Frontend to connect) ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,6 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- 3. MOCK DATABASE (Your simulated history) ---
 mock_db = {
     "profile": {"name": "Alex", "income": 5000},
     "accounts": {"checking": 1400, "savings": 12000, "debt": 500},
@@ -30,12 +32,18 @@ mock_db = {
     "goals": ["Buy House", "Clear Debt"]
 }
 
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7)
+# --- 4. LLM SETUP ---
+llm = ChatGoogleGenerativeAI(
+    model="gemini-1.5-flash", 
+    temperature=0.7,
+    google_api_key=os.environ["GOOGLE_API_KEY"]
+)
 
 @app.get("/")
 def health():
     return {"status": "ok"}
 
+# --- 5. CHAT ENDPOINT ---
 system_template = """
 You are a Financial Assistant. Use this user data to answer:
 Profile: {profile}
@@ -55,7 +63,6 @@ chat_chain = chat_prompt | llm | StrOutputParser()
 
 @app.post("/chat")
 async def chat(text: str = Body(..., embed=True)):
-
     response = chat_chain.invoke({
         "input": text,
         "profile": mock_db['profile'],
@@ -65,3 +72,27 @@ async def chat(text: str = Body(..., embed=True)):
     })
     return {"reply": response}
 
+# --- 6. NEW: NOTIFICATION ENDPOINT (For the Bonus) ---
+@app.post("/generate-alert")
+async def generate_alert(data: dict = Body(...)):
+    alert_type = data.get("type")
+    
+    # Define scenarios based on DB data
+    scenarios = {
+        "overspending": f"User spent $500 on 'Luxury'. Checking balance is now ${mock_db['accounts']['checking'] - 500}.",
+        "bill": f"Rent of $2000 is due. Current Checking: ${mock_db['accounts']['checking']}.",
+        "summary": f"End of month. Saved: ${mock_db['accounts']['savings']}. Debt: ${mock_db['accounts']['debt']}."
+    }
+    
+    context = scenarios.get(alert_type, "General update")
+
+    # Specialized Prompt for Notifications
+    notify_prompt = ChatPromptTemplate.from_messages([
+        ("system", "Write a single, urgent, 10-15 word push notification for a banking app."),
+        ("user", f"Context: {context}")
+    ])
+    
+    alert_chain = notify_prompt | llm | StrOutputParser()
+    alert_text = alert_chain.invoke({})
+    
+    return {"message": alert_text}
