@@ -7,9 +7,11 @@
     <title>Finance Companion | Professional Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .scrollbar-hide::-webkit-scrollbar {
@@ -31,6 +33,154 @@
             color: #4F46E5;
             border-right: 3px solid #4F46E5;
         }
+
+        /* Dark Mode Overrides */
+        body.dark-mode {
+            background-color: #020617;
+            /* Very deep slate */
+            color: #F8FAFC;
+        }
+
+        .dark-mode aside,
+        .dark-mode header,
+        .dark-mode .bg-white,
+        .dark-mode #chat-box,
+        .dark-mode .view-section {
+            background-color: #0F172A !important;
+            /* Deep Slate for professional look */
+            border-color: #1E293B !important;
+            color: #F1F5F9 !important;
+        }
+
+        .dark-mode .sidebar-link {
+            color: #9CA3AF;
+        }
+
+        .dark-mode .sidebar-link:hover {
+            background-color: #1E293B;
+            color: #F8FAFC;
+        }
+
+        .dark-mode .sidebar-link.active {
+            background-color: #312E81;
+            color: #E0E7FF;
+            border-right: 4px solid #818CF8;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode .text-gray-500,
+        .dark-mode .text-gray-400 {
+            color: #9CA3AF !important;
+        }
+
+        .dark-mode .bg-gray-50 {
+            background-color: #111827 !important;
+        }
+
+        .dark-mode .border-gray-100,
+        .dark-mode .border-gray-200 {
+            border-color: #374151 !important;
+        }
+
+        .dark-mode .bg-indigo-50,
+        .dark-mode .bg-blue-50,
+        .dark-mode .bg-green-50,
+        .dark-mode .bg-yellow-50,
+        .dark-mode .bg-red-50 {
+            background-color: rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .dark-mode .text-gray-800,
+        .dark-mode .text-gray-700 {
+            color: #E5E7EB !important;
+        }
+
+        .dark-mode #user-input {
+            background-color: #1E293B !important;
+            border-color: #334155 !important;
+            color: white !important;
+        }
+
+        .dark-mode .modal-content {
+            background-color: #1F2937 !important;
+            color: white !important;
+        }
+
+        .dark-mode .modal-content input,
+        .dark-mode .modal-content select,
+        .dark-mode .modal-content option {
+            background-color: #374151 !important;
+            border-color: #4B5563 !important;
+            color: white !important;
+        }
+
+        .dark-mode input::placeholder {
+            color: #9CA3AF !important;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gradient-income {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        .gradient-expense {
+            background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
+        }
+
+        .gradient-savings {
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+        }
+
+        .gradient-insight {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        /* Smooth View Transitions */
+        .view-section.active {
+            display: flex;
+            animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Click Animation */
+        button,
+        .sidebar-link {
+            transition: transform 0.1s ease, background-color 0.2s;
+        }
+
+        button:active,
+        .sidebar-link:active {
+            transform: scale(0.95);
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
     </style>
 </head>
 
@@ -46,32 +196,43 @@
             </div>
 
             <nav class="mt-6 flex flex-col gap-1">
-                <a href="#"
+                <a href="#" onclick="showView('dashboard')" id="nav-dashboard"
                     class="sidebar-link active px-6 py-3 flex items-center gap-3 font-medium text-sm transition-colors">
                     <span>📊</span> Dashboard
                 </a>
-                <a href="#"
+                <a href="#" onclick="showView('transactions')" id="nav-transactions"
                     class="sidebar-link px-6 py-3 flex items-center gap-3 font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                     <span>💳</span> Transactions
                 </a>
-                <a href="#"
+                <a href="#" onclick="showView('reports')" id="nav-reports"
                     class="sidebar-link px-6 py-3 flex items-center gap-3 font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                     <span>📈</span> Reports
                 </a>
-                <a href="#"
+                <a href="#" onclick="showView('settings')" id="nav-settings"
                     class="sidebar-link px-6 py-3 flex items-center gap-3 font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                     <span>⚙️</span> Settings
                 </a>
+                <a href="#" onclick="showView('update-totals')" id="nav-update-totals" class="hidden"></a>
             </nav>
+
+            <div class="px-6 mt-8">
+                <button onclick="toggleDarkMode()"
+                    class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-all group"
+                    id="theme-toggle">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-gray-600"
+                        id="theme-text">Dark Mode</span>
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
         </div>
 
         <div class="p-6 border-t border-gray-100">
             <div class="flex items-center gap-3">
                 <div
                     class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-                    A</div>
+                    U</div>
                 <div>
-                    <p class="text-sm font-semibold">Alex Doe</p>
+                    <p class="text-sm font-semibold">Workspace User</p>
                     <p class="text-xs text-gray-500">Premium Member</p>
                 </div>
             </div>
@@ -83,7 +244,7 @@
 
         <!-- Header -->
         <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8">
-            <h2 class="font-semibold text-lg">Financial Overview</h2>
+            <h2 class="font-semibold text-lg" id="view-title">Financial Overview</h2>
             <div class="flex items-center gap-4">
                 <button onclick="toggleModal()"
                     class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
@@ -97,40 +258,45 @@
             </div>
         </header>
 
-        <!-- Dashboard Grid -->
-        <div class="flex-1 overflow-y-auto p-8 scrollbar-hide">
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="flex-1 overflow-y-auto p-8 scrollbar-hide view-section active">
 
             <!-- Cards Row -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <!-- Income -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div onclick="showView('update-totals')"
+                    class="gradient-income p-6 rounded-2xl shadow-lg shadow-emerald-500/20 hover:scale-[1.02] transition-all cursor-pointer group text-white">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">💰</div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">+2.5%</span>
+                        <div class="p-2 bg-white/20 rounded-lg backdrop-blur-md">💰</div>
+                        <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded">+2.5%</span>
                     </div>
-                    <p class="text-sm text-gray-500 mb-1">Total Income</p>
-                    <h3 class="text-2xl font-bold" id="display-income">₹45,000</h3>
+                    <p class="text-sm text-emerald-100 mb-1 font-medium">Monthly Income</p>
+                    <h3 class="text-3xl font-bold" id="display-income">₹45,000</h3>
+                    <p class="text-[10px] text-emerald-200 mt-2 opacity-0 group-hover:opacity-100">Tap to edit →</p>
                 </div>
 
                 <!-- Expenses -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div onclick="showView('update-totals')"
+                    class="gradient-expense p-6 rounded-2xl shadow-lg shadow-rose-500/20 hover:scale-[1.02] transition-all cursor-pointer group text-white">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-red-50 rounded-lg text-red-600">📉</div>
-                        <span class="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded"
-                            id="expense-trend">+10%</span>
+                        <div class="p-2 bg-white/20 rounded-lg backdrop-blur-md">📉</div>
+                        <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded" id="expense-trend">+10%</span>
                     </div>
-                    <p class="text-sm text-gray-500 mb-1">Total Expenses</p>
-                    <h3 class="text-2xl font-bold" id="display-expense">₹36,000</h3>
+                    <p class="text-sm text-rose-100 mb-1 font-medium">Monthly Expenses</p>
+                    <h3 class="text-3xl font-bold" id="display-expense">₹36,000</h3>
+                    <p class="text-[10px] text-rose-200 mt-2 opacity-0 group-hover:opacity-100">Tap to edit →</p>
                 </div>
 
                 <!-- Savings -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div onclick="showView('update-totals')"
+                    class="gradient-savings p-6 rounded-2xl shadow-lg shadow-indigo-500/20 hover:scale-[1.02] transition-all cursor-pointer group text-white">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-green-50 rounded-lg text-green-600">🏦</div>
-                        <span class="text-xs font-medium text-gray-500">Target: ₹20k</span>
+                        <div class="p-2 bg-white/20 rounded-lg backdrop-blur-md">🏦</div>
+                        <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded">Goal: 65%</span>
                     </div>
-                    <p class="text-sm text-gray-500 mb-1">Current Savings</p>
-                    <h3 class="text-2xl font-bold" id="display-savings">₹9,000</h3>
+                    <p class="text-sm text-indigo-100 mb-1 font-medium">Net Savings</p>
+                    <h3 class="text-3xl font-bold" id="display-savings">₹9,000</h3>
+                    <p class="text-[10px] text-indigo-200 mt-2 opacity-0 group-hover:opacity-100">Tap to edit →</p>
                 </div>
 
                 <!-- Comparison -->
@@ -187,6 +353,40 @@
                         </div>
                     </div>
 
+                    <!-- Efficiency Score Widget -->
+                    <div
+                        class="bg-white dark-mode:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark-mode:border-white/5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-sm tracking-tight text-slate-800 dark-mode:text-slate-100">
+                                Efficiency Score</h3>
+                            <span
+                                class="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Optimal</span>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="relative w-16 h-16">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="5"
+                                        fill="transparent" class="text-gray-100 dark-mode:text-slate-700"></circle>
+                                    <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="5"
+                                        fill="transparent" stroke-dasharray="175" stroke-dashoffset="35"
+                                        class="text-indigo-600 transition-all duration-1000"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-lg font-bold">82</span>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p
+                                    class="text-[11px] text-gray-500 dark-mode:text-slate-400 mb-1 leading-tight font-medium">
+                                    Your spending is **18% more efficient** than last month.</p>
+                                <div class="flex gap-1 mt-2">
+                                    <div class="h-1 w-6 bg-indigo-600 rounded-full"></div>
+                                    <div class="h-1 w-4 bg-indigo-300 rounded-full opacity-50"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Smart Triggers -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <h3 class="font-semibold mb-4 text-xs uppercase tracking-wide text-gray-400">Simulation Controls
@@ -208,40 +408,47 @@
 
                 <!-- Right: AI Assistant -->
                 <div
-                    class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden h-[600px] lg:h-auto">
-                    <div class="p-4 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
-                        <div class="flex items-center gap-2">
+                    class="lg:col-span-2 glass-card rounded-2xl shadow-xl flex flex-col overflow-hidden h-[600px] lg:h-auto border border-white/5">
+                    <div
+                        class="p-4 border-b border-indigo-500/10 bg-indigo-500/5 flex justify-between items-center backdrop-blur-xl">
+                        <div class="flex items-center gap-3">
                             <div
-                                class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xs">
+                                class="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-indigo-500/20">
                                 AI</div>
                             <div>
-                                <h3 class="font-semibold text-sm">Gemini Assistant</h3>
-                                <p class="text-xs text-green-600">● Online</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
-                        <!-- Welcome Message -->
-                        <div class="flex gap-4">
-                            <div
-                                class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600 text-xs font-bold">
-                                AI</div>
-                            <div class="bg-gray-50 p-4 rounded-2xl rounded-tl-none max-w-[85%] border border-gray-100">
-                                <p class="text-sm text-gray-700 leading-relaxed">Hello Alex. I've analyzed your new
-                                    transaction data. Your expense ratio is slightly high this month. How can I assist?
+                                <h3 class="font-bold text-sm tracking-tight">SpendWise Intelligence</h3>
+                                <p class="text-[10px] text-emerald-500 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                    Operational
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-4 border-t border-gray-100 bg-gray-50">
+                    <div id="chat-box"
+                        class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30 dark-mode:bg-slate-900/20 scrollbar-hide">
+                        <!-- Welcome Message -->
+                        <div class="flex gap-4">
+                            <div
+                                class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0 text-white text-[10px] font-bold shadow-md">
+                                AI</div>
+                            <div
+                                class="bg-white dark-mode:bg-slate-800 p-4 rounded-2xl rounded-tl-none max-w-[85%] border border-gray-100 dark-mode:border-white/5 shadow-sm">
+                                <p class="text-sm text-gray-700 dark-mode:text-slate-200 leading-relaxed font-light">I
+                                    am **SpendWise AI**, your ultra-efficient financial orchestrator. How shall we
+                                    optimize your capital allocation today?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="p-4 border-t border-gray-100 dark-mode:border-white/5 bg-white/50 dark-mode:bg-slate-900/40 backdrop-blur-md">
                         <div class="flex gap-2">
                             <input type="text" id="user-input"
-                                class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white shadow-sm"
-                                placeholder="Ask for advice..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                                class="flex-1 border border-gray-200 dark-mode:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark-mode:bg-slate-800 shadow-sm text-gray-800 dark-mode:text-white"
+                                placeholder="Consult SpendWise..." onkeypress="if(event.key === 'Enter') sendMessage()">
                             <button onclick="sendMessage()"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 rounded-xl font-medium shadow-sm transition-colors">
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 rounded-xl font-bold shadow-lg shadow-indigo-200 dark-mode:shadow-none transition-all active:scale-95">
                                 Send
                             </button>
                         </div>
@@ -250,40 +457,145 @@
 
             </div>
         </div>
+
+        <!-- View: Transactions -->
+        <div id="view-transactions" class="flex-1 overflow-y-auto p-8 scrollbar-hide view-section">
+            <div class="flex justify-between items-center mb-6">
+                <div class="relative w-full max-w-md">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                    <input type="text" id="transaction-search" oninput="filterTransactions()"
+                        class="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm shadow-sm"
+                        placeholder="Search by description or category...">
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-100">
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Date</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Description</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Category</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-table-body">
+                        <!-- Entries added dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- View: Reports -->
+        <div id="view-reports" class="flex-1 overflow-y-auto p-8 scrollbar-hide view-section">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
+                    <h3 class="text-xl font-bold mb-6 w-full">Spending Breakdown</h3>
+                    <div class="w-full max-w-[300px]">
+                        <canvas id="spendingPieChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-600 p-8 rounded-2xl text-white shadow-lg flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">AI Financial Health Report</h3>
+                        <p class="text-indigo-100 leading-relaxed mb-6" id="ai-report-text">
+                            Your financial health is stable. We are calculating your latest trends...
+                        </p>
+                    </div>
+                    <button onclick="fetchAIInsight()"
+                        class="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors w-full">
+                        Refresh AI Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Update Totals -->
+        <div id="view-update-totals" class="flex-1 overflow-y-auto p-8 scrollbar-hide view-section">
+            <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Update Financial Totals</h3>
+                <p class="text-gray-500 mb-8">Manually adjust your base income and expenses used for all dashboard
+                    calculations.</p>
+
+                <div class="space-y-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Total Monthly Income</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+                            <input type="number" id="manual-income-input"
+                                class="w-full pl-10 pr-4 py-4 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all text-xl font-bold text-gray-800"
+                                placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Total Monthly Expenses</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+                            <input type="number" id="manual-expense-input"
+                                class="w-full pl-10 pr-4 py-4 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-red-500 transition-all text-xl font-bold text-gray-800"
+                                placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="pt-6 flex gap-4">
+                        <button onclick="showView('dashboard')"
+                            class="flex-1 py-4 border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-colors">
+                            Discard Changes
+                        </button>
+                        <button onclick="saveManualTotals()"
+                            class="flex-1 py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">
+                            Save & Update Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Modal for Manual Entry -->
     <div id="entry-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all scale-100">
-            <h3 class="text-lg font-bold mb-4">Update Financials</h3>
+        <div
+            class="bg-white dark-mode:bg-gray-800 modal-content rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all scale-100">
+            <h3 class="text-lg font-bold mb-4">Add Transaction</h3>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Income</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-3 text-gray-500">₹</span>
-                        <input type="number" id="input-income"
-                            class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                            value="45000">
-                    </div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <input type="text" id="input-desc" placeholder="e.g. Grocery, Electricity"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Expenses</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select id="input-cat"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="Food">Food</option>
+                        <option value="Rent">Rent</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
                     <div class="relative">
                         <span class="absolute left-3 top-3 text-gray-500">₹</span>
-                        <input type="number" id="input-expense"
+                        <input type="number" id="input-amount"
                             class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                            value="36000">
+                            placeholder="0.00">
                     </div>
+                </div>
+                <div class="hidden">
+                    <input type="number" id="input-income" value="45000">
                 </div>
             </div>
 
             <div class="mt-6 flex gap-3">
                 <button onclick="toggleModal()"
                     class="flex-1 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">Cancel</button>
-                <button onclick="updateFinancials()"
-                    class="flex-1 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-sm">Update
-                    Dashboard</button>
+                <button onclick="addManualTransaction()"
+                    class="flex-1 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-sm">Save
+                    Transaction</button>
             </div>
         </div>
     </div>
@@ -292,11 +604,188 @@
         // State
         let currentIncome = 45000;
         let currentExpense = 36000;
-        const previousExpense = 32500; // Hardcoded for comparison
+        const previousExpense = 32500;
+        let transactions = [
+            { date: '2026-02-10', desc: 'Rent', cat: 'Rent', amount: 15000 },
+            { date: '2026-02-12', desc: 'Grocery Store', cat: 'Food', amount: 2500 },
+            { date: '2026-02-13', desc: 'Gas Bill', cat: 'Utilities', amount: 1200 },
+        ];
+
+        let spendingChart = null;
+
+        function showView(viewName) {
+            // Hide all
+            document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+
+            // Show target
+            document.getElementById(`view-${viewName}`).classList.add('active');
+            document.getElementById(`nav-${viewName}`).classList.add('active');
+
+            // Update title
+            const titles = {
+                dashboard: "Financial Overview",
+                transactions: "Transaction History",
+                reports: "Financial Reports",
+                symbols: "Settings"
+            };
+            document.getElementById('view-title').innerText = titles[viewName] || "Finance Companion";
+
+            if (viewName === 'transactions') renderTransactions();
+            if (viewName === 'reports') renderReports();
+            if (viewName === 'update-totals') {
+                document.getElementById('manual-income-input').value = currentIncome;
+                document.getElementById('manual-expense-input').value = currentExpense;
+                document.getElementById('view-title').innerText = "Manual Financial Adjustment";
+            }
+        }
+
+        function saveManualTotals() {
+            const inc = parseFloat(document.getElementById('manual-income-input').value) || 0;
+            const exp = parseFloat(document.getElementById('manual-expense-input').value) || 0;
+
+            currentIncome = inc;
+            currentExpense = exp;
+
+            updateUI();
+            fetchAIInsight();
+            showView('dashboard');
+
+            addMessage(`Manually updated totals. Income: ₹${currentIncome}, Expenses: ₹${currentExpense}`, 'system');
+            sendNotification("Totals Updated", "Your dashboard metrics have been adjusted manually.");
+        }
+
+        function renderReports() {
+            const totals = { Food: 0, Rent: 0, Utilities: 0, Others: 0 };
+            transactions.forEach(t => {
+                if (totals[t.cat] !== undefined) totals[t.cat] += t.amount;
+                else totals.Others += t.amount;
+            });
+
+            const canvas = document.getElementById('spendingPieChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            if (spendingChart) spendingChart.destroy();
+
+            const isDark = document.body.classList.contains('dark-mode');
+            const textColor = isDark ? '#F3F4F6' : '#374151';
+
+            spendingChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(totals),
+                    datasets: [{
+                        data: Object.values(totals) || [0, 0, 0, 0],
+                        backgroundColor: ['#10B981', '#6366F1', '#3B82F6', '#F59E0B'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor,
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                },
+                                padding: 20
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        function renderTransactions(filter = "") {
+            const tbody = document.getElementById('transaction-table-body');
+            const filtered = transactions.filter(t =>
+                t.desc.toLowerCase().includes(filter.toLowerCase()) ||
+                t.cat.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            tbody.innerHTML = filtered.map(t => `
+                <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors animate-fadeIn">
+                    <td class="px-6 py-4 text-sm text-gray-600">${t.date}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-800">${t.desc}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${getCatClass(t.cat)}">${t.cat}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm font-bold text-gray-800">₹${t.amount.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterTransactions() {
+            const val = document.getElementById('transaction-search').value;
+            renderTransactions(val);
+        }
+
+        function getCatClass(cat) {
+            const classes = {
+                Food: 'bg-emerald-50 text-emerald-600',
+                Rent: 'bg-indigo-50 text-indigo-600',
+                Utilities: 'bg-blue-50 text-blue-600',
+                Others: 'bg-orange-50 text-orange-600'
+            };
+            return classes[cat] || 'bg-gray-100 text-gray-600';
+        }
+
+        function addManualTransaction() {
+            const desc = document.getElementById('input-desc').value;
+            const cat = document.getElementById('input-cat').value;
+            const amt = parseFloat(document.getElementById('input-amount').value) || 0;
+
+            if (!desc || amt <= 0) return alert("Please enter valid details.");
+
+            const newT = {
+                date: new Date().toISOString().split('T')[0],
+                desc: desc,
+                cat: cat,
+                amount: amt
+            };
+
+            transactions.unshift(newT);
+            currentExpense += amt;
+
+            updateUI();
+            fetchAIInsight();
+            toggleModal();
+            renderTransactions();
+
+            addMessage(`Added ${desc} (₹${amt}) to ${cat}`, 'system');
+            sendNotification("Transaction Added", `Spend of ₹${amt} logged successfully.`);
+        }
+
+        // Theme Handling
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeUI();
+            if (document.getElementById('view-reports').classList.contains('active')) renderReports();
+        }
+
+        function updateThemeUI() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const toggleText = document.getElementById('theme-text');
+            const toggleIcon = document.getElementById('theme-icon');
+            if (toggleText) toggleText.innerText = isDark ? 'Light Mode' : 'Dark Mode';
+            if (toggleIcon) toggleIcon.innerText = isDark ? '☀️' : '🌙';
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            updateThemeUI();
+        }
 
         const chatBox = document.getElementById('chat-box');
 
-        // Initial render
         updateUI();
 
         function toggleModal() {
@@ -305,34 +794,44 @@
             modal.classList.toggle('flex');
         }
 
-        function updateFinancials() {
-            const inc = parseFloat(document.getElementById('input-income').value) || 0;
-            const exp = parseFloat(document.getElementById('input-expense').value) || 0;
+        async function fetchAIInsight() {
+            const insightEl = document.getElementById('smart-insight');
+            if (insightEl) insightEl.innerText = "Analyzing patterns...";
 
-            currentIncome = inc;
-            currentExpense = exp;
+            try {
+                const response = await fetch('http://127.0.0.1:8000/get-insight', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        context: { income: currentIncome, expenses: currentExpense },
+                        transactions: transactions // Send full history for Gemini to analyze
+                    })
+                });
 
-            updateUI();
-            toggleModal();
+                if (!response.ok) throw new Error("Server Error");
 
-            // Notify via chat logic (Simulation)
-            addMessage(`Updated financials. Income: ₹${currentIncome}, Expenses: ₹${currentExpense}`, 'system');
+                const data = await response.json();
+                if (insightEl) insightEl.innerText = data.insight;
+
+                const reportText = document.getElementById('ai-report-text');
+                if (reportText) reportText.innerText = data.insight;
+            } catch (e) {
+                console.error("Failed to get AI insight", e);
+                if (insightEl) insightEl.innerText = "Check Python Server & API Key in .env";
+            }
         }
 
         function updateUI() {
-            // Update Text
             document.getElementById('display-income').innerText = `₹${currentIncome.toLocaleString()}`;
             document.getElementById('display-expense').innerText = `₹${currentExpense.toLocaleString()}`;
             document.getElementById('display-savings').innerText = `₹${(currentIncome - currentExpense).toLocaleString()}`;
 
-            // Update Comparison Bar
             const maxVal = Math.max(currentExpense, previousExpense) * 1.2;
             const currentPct = (currentExpense / maxVal) * 100;
 
             document.getElementById('comp-current').innerText = `₹${currentExpense.toLocaleString()}`;
             document.getElementById('bar-current').style.width = `${currentPct}%`;
 
-            // Logic for insight
             const diff = ((currentExpense - previousExpense) / previousExpense) * 100;
             const trendEl = document.getElementById('expense-trend');
             const insightEl = document.getElementById('smart-insight');
@@ -340,15 +839,13 @@
             if (diff > 0) {
                 trendEl.innerText = `+${diff.toFixed(1)}%`;
                 trendEl.className = "text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded";
-                insightEl.innerText = "Spending is trending higher this month. Review discretionary items.";
+                if (insightEl) insightEl.innerText = "Spending is trending higher this month. Review discretionary items.";
             } else {
                 trendEl.innerText = `${diff.toFixed(1)}%`;
                 trendEl.className = "text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded";
-                insightEl.innerText = "Great job! You are spending less than last month.";
+                if (insightEl) insightEl.innerText = "Great job! You are spending less than last month.";
             }
         }
-
-        // --- Chat & Notification Logic (Preserved) ---
 
         async function sendMessage() {
             const input = document.getElementById('user-input');
@@ -364,15 +861,27 @@
                 const response = await fetch('http://127.0.0.1:8000/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    // In a real app, we'd send the new context here
-                    body: JSON.stringify({ text: text })
+                    body: JSON.stringify({
+                        text: text,
+                        context: {
+                            name: "User",
+                            income: currentIncome,
+                            expenses: currentExpense,
+                            savings: currentIncome - currentExpense,
+                            goals: ["bike fund"],
+                            transactions: transactions // Sync transactions with Chat
+                        }
+                    })
                 });
+
+                if (!response.ok) throw new Error("AI Offline");
+
                 const data = await response.json();
                 removeLoading(loadingId);
                 addMessage(data.reply, 'bot');
             } catch (e) {
                 removeLoading(loadingId);
-                addMessage("I'm offline right now (Check Python server).", 'bot');
+                addMessage("⚠️ AI Connection Failed. Make sure your Python server is running and GOOGLE_API_KEY is added to the .env file.", 'bot');
             }
         }
 
@@ -412,6 +921,7 @@
                     <div class="flex gap-1"><div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div><div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div></div>
                 </div>`;
             chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
             return id;
         }
 
@@ -420,11 +930,14 @@
             if (el) el.remove();
         }
 
-        // Notification Logic
         function requestPermission() {
             if (Notification.permission !== "granted") Notification.requestPermission();
         }
-        window.onload = requestPermission;
+        window.onload = function () {
+            requestPermission();
+            fetchAIInsight();
+            renderTransactions();
+        }
 
         function sendNotification(title, message) {
             if (Notification.permission === "granted") {
@@ -438,7 +951,14 @@
                 const response = await fetch('http://127.0.0.1:8000/generate-alert', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: type })
+                    body: JSON.stringify({
+                        type: type,
+                        context: {
+                            income: currentIncome,
+                            expenses: currentExpense,
+                            savings: currentIncome - currentExpense
+                        }
+                    })
                 });
                 const data = await response.json();
                 sendNotification("Financial Alert", data.message);
