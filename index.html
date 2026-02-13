@@ -100,7 +100,36 @@
 
         .dark-mode .modal-content {
             background-color: #1F2937 !important;
-            color: white;
+            color: white !important;
+        }
+
+        .dark-mode .modal-content input,
+        .dark-mode .modal-content select,
+        .dark-mode .modal-content option {
+            background-color: #374151 !important;
+            border-color: #4B5563 !important;
+            color: white !important;
+        }
+
+        .dark-mode input::placeholder {
+            color: #9CA3AF !important;
+        }
+
+        /* Fix visibility for specific views */
+        .dark-mode #view-update-totals input {
+            background-color: #374151 !important;
+            color: white !important;
+        }
+
+        /* Click Animation */
+        button,
+        .sidebar-link {
+            transition: transform 0.1s ease, background-color 0.2s;
+        }
+
+        button:active,
+        .sidebar-link:active {
+            transform: scale(0.95);
         }
 
         .view-section {
@@ -141,6 +170,7 @@
                     class="sidebar-link px-6 py-3 flex items-center gap-3 font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                     <span>⚙️</span> Settings
                 </a>
+                <a href="#" onclick="showView('update-totals')" id="nav-update-totals" class="hidden"></a>
             </nav>
 
             <div class="px-6 mt-8">
@@ -158,9 +188,9 @@
             <div class="flex items-center gap-3">
                 <div
                     class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-                    A</div>
+                    U</div>
                 <div>
-                    <p class="text-sm font-semibold">Alex Doe</p>
+                    <p class="text-sm font-semibold">Workspace User</p>
                     <p class="text-xs text-gray-500">Premium Member</p>
                 </div>
             </div>
@@ -192,34 +222,49 @@
             <!-- Cards Row -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <!-- Income -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div onclick="showView('update-totals')"
+                    class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer group">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">💰</div>
+                        <div
+                            class="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            💰</div>
                         <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">+2.5%</span>
                     </div>
                     <p class="text-sm text-gray-500 mb-1">Total Income</p>
                     <h3 class="text-2xl font-bold" id="display-income">₹45,000</h3>
+                    <p class="text-[10px] text-indigo-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to update →</p>
                 </div>
 
                 <!-- Expenses -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div onclick="showView('update-totals')"
+                    class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-red-300 hover:shadow-md transition-all cursor-pointer group">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-red-50 rounded-lg text-red-600">📉</div>
+                        <div
+                            class="p-2 bg-red-50 rounded-lg text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                            📉</div>
                         <span class="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded"
                             id="expense-trend">+10%</span>
                     </div>
                     <p class="text-sm text-gray-500 mb-1">Total Expenses</p>
                     <h3 class="text-2xl font-bold" id="display-expense">₹36,000</h3>
+                    <p class="text-[10px] text-red-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Click
+                        to update →</p>
                 </div>
 
                 <!-- Savings -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div onclick="showView('update-totals')"
+                    class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-green-300 hover:shadow-md transition-all cursor-pointer group">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-green-50 rounded-lg text-green-600">🏦</div>
+                        <div
+                            class="p-2 bg-green-50 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                            🏦</div>
                         <span class="text-xs font-medium text-gray-500">Target: ₹20k</span>
                     </div>
                     <p class="text-sm text-gray-500 mb-1">Current Savings</p>
                     <h3 class="text-2xl font-bold" id="display-savings">₹9,000</h3>
+                    <p class="text-[10px] text-green-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to update →</p>
                 </div>
 
                 <!-- Comparison -->
@@ -304,8 +349,8 @@
                                 class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xs">
                                 AI</div>
                             <div>
-                                <h3 class="font-semibold text-sm">Gemini Assistant</h3>
-                                <p class="text-xs text-green-600">● Online</p>
+                                <h3 class="font-semibold text-sm">SpendWise AI</h3>
+                                <p class="text-xs text-green-600">● Smart Engine Online</p>
                             </div>
                         </div>
                     </div>
@@ -317,11 +362,12 @@
                                 class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600 text-xs font-bold">
                                 AI</div>
                             <div class="bg-gray-50 p-4 rounded-2xl rounded-tl-none max-w-[85%] border border-gray-100">
-                                <p class="text-sm text-gray-700 leading-relaxed">How can I support your financial
-                                    planning today?</p>
+                                <p class="text-sm text-gray-700 leading-relaxed">I am **SpendWise AI**, your intelligent
+                                    financial assistant. How can I help you optimize your budget today?</p>
                             </div>
                         </div>
                     </div>
+
 
                     <div class="p-4 border-t border-gray-100 bg-gray-50">
                         <div class="flex gap-2">
@@ -379,6 +425,48 @@
                         class="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors w-full">
                         Refresh AI Analysis
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Update Totals -->
+        <div id="view-update-totals" class="flex-1 overflow-y-auto p-8 scrollbar-hide view-section">
+            <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Update Financial Totals</h3>
+                <p class="text-gray-500 mb-8">Manually adjust your base income and expenses used for all dashboard
+                    calculations.</p>
+
+                <div class="space-y-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Total Monthly Income</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+                            <input type="number" id="manual-income-input"
+                                class="w-full pl-10 pr-4 py-4 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all text-xl font-bold text-gray-800"
+                                placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Total Monthly Expenses</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+                            <input type="number" id="manual-expense-input"
+                                class="w-full pl-10 pr-4 py-4 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-red-500 transition-all text-xl font-bold text-gray-800"
+                                placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="pt-6 flex gap-4">
+                        <button onclick="showView('dashboard')"
+                            class="flex-1 py-4 border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-colors">
+                            Discard Changes
+                        </button>
+                        <button onclick="saveManualTotals()"
+                            class="flex-1 py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">
+                            Save & Update Dashboard
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -464,6 +552,26 @@
 
             if (viewName === 'transactions') renderTransactions();
             if (viewName === 'reports') renderReports();
+            if (viewName === 'update-totals') {
+                document.getElementById('manual-income-input').value = currentIncome;
+                document.getElementById('manual-expense-input').value = currentExpense;
+                document.getElementById('view-title').innerText = "Manual Financial Adjustment";
+            }
+        }
+
+        function saveManualTotals() {
+            const inc = parseFloat(document.getElementById('manual-income-input').value) || 0;
+            const exp = parseFloat(document.getElementById('manual-expense-input').value) || 0;
+
+            currentIncome = inc;
+            currentExpense = exp;
+
+            updateUI();
+            fetchAIInsight();
+            showView('dashboard');
+
+            addMessage(`Manually updated totals. Income: ₹${currentIncome}, Expenses: ₹${currentExpense}`, 'system');
+            sendNotification("Totals Updated", "Your dashboard metrics have been adjusted manually.");
         }
 
         function renderReports() {
@@ -597,21 +705,28 @@
 
         async function fetchAIInsight() {
             const insightEl = document.getElementById('smart-insight');
-            if (insightEl) insightEl.innerText = "Analyzing data...";
+            if (insightEl) insightEl.innerText = "Analyzing patterns...";
 
             try {
                 const response = await fetch('http://127.0.0.1:8000/get-insight', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        context: { income: currentIncome, expenses: currentExpense }
+                        context: { income: currentIncome, expenses: currentExpense },
+                        transactions: transactions // Send full history for Gemini to analyze
                     })
                 });
+
+                if (!response.ok) throw new Error("Server Error");
+
                 const data = await response.json();
                 if (insightEl) insightEl.innerText = data.insight;
-                document.getElementById('ai-report-text').innerText = data.insight + " Total savings are tracked at " + document.getElementById('display-savings').innerText;
+
+                const reportText = document.getElementById('ai-report-text');
+                if (reportText) reportText.innerText = data.insight;
             } catch (e) {
                 console.error("Failed to get AI insight", e);
+                if (insightEl) insightEl.innerText = "Check Python Server & API Key in .env";
             }
         }
 
@@ -658,20 +773,24 @@
                     body: JSON.stringify({
                         text: text,
                         context: {
-                            name: "Alex",
+                            name: "User",
                             income: currentIncome,
                             expenses: currentExpense,
                             savings: currentIncome - currentExpense,
-                            goals: ["bike fund"]
+                            goals: ["bike fund"],
+                            transactions: transactions // Sync transactions with Chat
                         }
                     })
                 });
+
+                if (!response.ok) throw new Error("AI Offline");
+
                 const data = await response.json();
                 removeLoading(loadingId);
                 addMessage(data.reply, 'bot');
             } catch (e) {
                 removeLoading(loadingId);
-                addMessage("I'm offline right now (Check Python server).", 'bot');
+                addMessage("⚠️ AI Connection Failed. Make sure your Python server is running and GOOGLE_API_KEY is added to the .env file.", 'bot');
             }
         }
 
