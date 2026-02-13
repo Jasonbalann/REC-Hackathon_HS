@@ -33,3 +33,32 @@ llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7)
 def health():
     return {"status": "ok"}
 
+system_template = """
+You are a Financial Assistant. Use this user data to answer:
+Profile: {profile}
+Accounts: {accounts}
+Recent History: {history}
+Goals: {goals}
+
+Keep answers concise (max 3 sentences).
+"""
+
+chat_prompt = ChatPromptTemplate.from_messages([
+    ("system", system_template),
+    ("user", "{input}")
+])
+
+chat_chain = chat_prompt | llm | StrOutputParser()
+
+@app.post("/chat")
+async def chat(text: str = Body(..., embed=True)):
+
+    response = chat_chain.invoke({
+        "input": text,
+        "profile": mock_db['profile'],
+        "accounts": mock_db['accounts'],
+        "history": "\n".join(mock_db['history']),
+        "goals": mock_db['goals']
+    })
+    return {"reply": response}
+
