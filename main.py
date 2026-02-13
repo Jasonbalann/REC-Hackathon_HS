@@ -1,8 +1,11 @@
+import os
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema.output_parser import StrOutputParser
+# --- CHANGED THESE TWO LINES BELOW ---
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+# -------------------------------------
 from dotenv import load_dotenv
 
 load_dotenv()
