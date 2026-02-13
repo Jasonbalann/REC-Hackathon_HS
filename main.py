@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv 
 from fastapi import FastAPI, Body
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,8 +7,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-# --- 1. API KEY CONFIGURATION ---
-os.environ["GOOGLE_API_KEY"] = "AIzaSyAkD5LwaWkLVsbuR6k_Ah30k7B-sl5MPhs"
+load_dotenv()
 
 app = FastAPI()
 
@@ -36,13 +36,12 @@ mock_db = {
     "goals": ["Buy House", "Clear Debt"]
 }
 
+
 # --- 4. LLM SETUP ---
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash", 
+    model="gemini-2.0-flash",
     temperature=0.7,
-    google_api_key=os.environ["GOOGLE_API_KEY"],
-    # Put the version fix inside here!
-    client_options={"api_version": "v1"} 
+    convert_system_message_to_human=True 
 )
 
 @app.get("/")
