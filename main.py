@@ -24,7 +24,7 @@ app.add_middleware(
 )
 
 # --- 3. MOCK DATABASE (Your simulated history) ---
-mock_db = {
+mock_db = { 
     "profile": {"name": "Alex", "income": 5000},
     "accounts": {"checking": 1400, "savings": 12000, "debt": 500},
     "history": [
@@ -42,6 +42,8 @@ llm = ChatGoogleGenerativeAI(
     temperature=0.7,
     google_api_key=os.environ["GOOGLE_API_KEY"]
 )
+
+llm.client_options = {"api_version": "v1"}
 
 @app.get("/")
 def health():
