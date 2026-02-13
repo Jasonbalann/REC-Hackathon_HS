@@ -38,12 +38,12 @@ mock_db = {
 
 # --- 4. LLM SETUP ---
 llm = ChatGoogleGenerativeAI(
-    model="models/gemini-1.5-flash", # Added 'models/' prefix
+    model="gemini-1.5-flash", 
     temperature=0.7,
-    google_api_key=os.environ["GOOGLE_API_KEY"]
+    google_api_key=os.environ["GOOGLE_API_KEY"],
+    # Put the version fix inside here!
+    client_options={"api_version": "v1"} 
 )
-
-llm.client_options = {"api_version": "v1"}
 
 @app.get("/")
 def health():
